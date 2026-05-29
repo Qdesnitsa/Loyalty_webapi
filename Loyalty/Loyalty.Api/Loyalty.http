@@ -1,0 +1,39 @@
+@Loyalty_HostAddress = http://localhost:5281
+
+### Create program
+POST {{Loyalty_HostAddress}}/api/programs
+Content-Type: application/json
+
+{
+  "id": "summer-2026",
+  "title": "Summer promo",
+  "description": "First loyalty program",
+  "state": "Active",
+  "startDate": "2026-06-01T00:00:00Z",
+  "finishDate": "2026-08-31T23:59:59Z",
+  "minTransactionAmount": 10,
+  "maxTransactionAmount": 10000,
+  "achievement": {
+    "id": "first-bonus",
+    "transactionsCountToApplyAchievement": 1,
+    "reward": {
+      "amount": 5,
+      "type": "Percent",
+      "target": "Bonus",
+      "usageType": "Add"
+    }
+  },
+  "createdBy": "esidina"
+}
+
+###
+
+### Get program
+GET {{Loyalty_HostAddress}}/api/programs/summer-2026
+
+###
+
+### Mongo health
+GET {{Loyalty_HostAddress}}/health
+
+###
