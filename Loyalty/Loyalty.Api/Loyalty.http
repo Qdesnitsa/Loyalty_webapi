@@ -29,6 +29,11 @@ Content-Type: application/json
 
 ###
 
+### Get all programs
+GET {{Loyalty_HostAddress}}/api/programs
+
+###
+
 ### Get program
 GET {{Loyalty_HostAddress}}/api/programs/summer-2026
 

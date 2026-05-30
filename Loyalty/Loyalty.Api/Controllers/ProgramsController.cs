@@ -31,7 +31,7 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UpdateProgramResponse>> Update(
-        [FromRoute] string id,
+        string id,
         [FromBody] UpdateProgramRequest request,
         CancellationToken cancellationToken)
     {
@@ -44,12 +44,20 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        [FromRoute] string id,
+        string id,
         [FromBody] DeleteProgramRequest request,
         CancellationToken cancellationToken)
     {
         await mediator.Send(new DeleteProgramCommand(id, request.UpdatedBy), cancellationToken);
         return NoContent();
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(GetProgramsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetProgramsResponse>> GetAll(CancellationToken cancellationToken)
+    {
+        var programs = await mediator.Send(new GetProgramsQuery(), cancellationToken);
+        return Ok(new GetProgramsResponse(programs.Select(ApiProgram.FromApplication).ToArray()));
     }
 
     [HttpGet("{id}")]

@@ -21,6 +21,12 @@ public sealed class ProgramRepository(IMongoDatabase database) : IProgramReposit
         return document is null ? null : ProgramDocumentMapper.ToDomain(document);
     }
 
+    public async Task<IReadOnlyList<Program>> GetAllNotDeletedAsync(CancellationToken cancellationToken = default)
+    {
+        var documents = await _programs.Find(p => !p.IsDeleted).ToListAsync(cancellationToken);
+        return documents.Select(ProgramDocumentMapper.ToDomain).ToList();
+    }
+
     public async Task AddAsync(Program program, CancellationToken cancellationToken = default) =>
         await _programs.InsertOneAsync(ProgramDocumentMapper.ToDocument(program), cancellationToken: cancellationToken);
 

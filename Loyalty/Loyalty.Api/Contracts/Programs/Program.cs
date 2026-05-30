@@ -65,3 +65,5 @@ public sealed record CreateProgramResponse(Program Program);
 public sealed record UpdateProgramResponse(Program Program);
 
 public sealed record GetProgramResponse(Program Program);
+
+public sealed record GetProgramsResponse(Program[] Programs);
