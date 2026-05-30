@@ -2,6 +2,7 @@ namespace Loyalty.Domain.Entities;
 
 public class Reward
 {
+    public required string Id { get; init; }
     public decimal Amount { get; init; }
     public RewardValueType Type { get; init; }
     public RewardTarget Target { get; init; }

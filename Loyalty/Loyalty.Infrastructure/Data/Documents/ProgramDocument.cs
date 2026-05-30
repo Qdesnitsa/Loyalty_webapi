@@ -33,6 +33,7 @@ public sealed class AchievementDocument
 
 public sealed class RewardDocument
 {
+    public required string Id { get; init; }
     public decimal Amount { get; init; }
     public RewardValueType Type { get; init; }
     public RewardTarget Target { get; init; }

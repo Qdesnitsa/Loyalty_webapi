@@ -20,6 +20,7 @@ public sealed record AchievementRequest(
     RewardRequest Reward);
 
 public sealed record RewardRequest(
+    string Id,
     decimal Amount,
     RewardValueType Type,
     RewardTarget Target,

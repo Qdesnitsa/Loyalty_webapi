@@ -29,19 +29,29 @@ public class Program
         string createdBy)
     {
         if (string.IsNullOrWhiteSpace(id))
+        {
             throw new ArgumentException("Program id is required.", nameof(id));
+        }
 
         if (string.IsNullOrWhiteSpace(title))
+        {
             throw new ArgumentException("Program title is required.", nameof(title));
+        }
 
         if (string.IsNullOrWhiteSpace(createdBy))
+        {
             throw new ArgumentException("CreatedBy is required.", nameof(createdBy));
+        }
 
         if (finishDate <= startDate)
+        {
             throw new ArgumentException("Finish date must be after start date.", nameof(finishDate));
+        }
 
         if (minTransactionAmount > maxTransactionAmount)
+        {
             throw new ArgumentException("Min transaction amount cannot exceed max transaction amount.");
+        }
 
         var now = DateTime.UtcNow;
 

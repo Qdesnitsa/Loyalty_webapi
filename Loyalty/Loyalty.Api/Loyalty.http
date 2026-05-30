@@ -17,6 +17,7 @@ Content-Type: application/json
     "id": "first-bonus",
     "transactionsCountToApplyAchievement": 1,
     "reward": {
+      "id": "bonus-percent",
       "amount": 5,
       "type": "Percent",
       "target": "Bonus",

@@ -1,0 +1,20 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# Avoid excessive blank lines (Rider/ReSharper respect these where supported)
+dotnet_style_allow_multiple_blank_lines_experimental = false
+
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = false

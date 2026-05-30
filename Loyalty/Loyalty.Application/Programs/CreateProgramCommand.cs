@@ -1,4 +1,5 @@
 using Loyalty.Domain.Entities;
+using ApplicationProgram = Loyalty.Application.Programs.Models.Program;
 
 namespace Loyalty.Application.Programs;
 
@@ -12,4 +13,4 @@ public sealed record CreateProgramCommand(
     decimal MinTransactionAmount,
     decimal MaxTransactionAmount,
     Achievement Achievement,
-    string CreatedBy);
+    string CreatedBy) : ICommand<ApplicationProgram>;

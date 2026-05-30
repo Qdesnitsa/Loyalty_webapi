@@ -1,4 +1,3 @@
-using Loyalty.Application.Programs;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Loyalty.Application;
@@ -7,7 +6,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<CreateProgramService>();
+        services.AddMediatR(config =>
+            config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
 
         return services;
     }

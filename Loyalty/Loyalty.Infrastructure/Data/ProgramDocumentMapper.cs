@@ -23,6 +23,7 @@ internal static class ProgramDocumentMapper
                 TransactionsCountToApplyAchievement = program.Achievement.TransactionsCountToApplyAchievement,
                 Reward = new RewardDocument
                 {
+                    Id = program.Achievement.Reward.Id,
                     Amount = program.Achievement.Reward.Amount,
                     Type = program.Achievement.Reward.Type,
                     Target = program.Achievement.Reward.Target,
@@ -49,9 +50,10 @@ internal static class ProgramDocumentMapper
             Achievement = new Achievement
             {
                 Id = document.Achievement.Id,
-                TransactionsCountToApplyAchievement = document.Achievement.TransactionsCountToApplyAchievement,
+                TransactionsCountToApplyAchievement = document.Achievement.TransactionsCountToApplyAchievement ?? 0,
                 Reward = new Reward
                 {
+                    Id = document.Achievement.Reward.Id,
                     Amount = document.Achievement.Reward.Amount,
                     Type = document.Achievement.Reward.Type,
                     Target = document.Achievement.Reward.Target,
