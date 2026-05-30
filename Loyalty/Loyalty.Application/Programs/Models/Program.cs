@@ -39,7 +39,8 @@ public sealed record Program(
     DateTime CreatedAt,
     string CreatedBy,
     DateTime UpdatedAt,
-    string UpdatedBy)
+    string UpdatedBy,
+    bool IsDeleted)
 {
     public static Program FromDomain(DomainProgram program) =>
         new(
@@ -55,5 +56,6 @@ public sealed record Program(
             program.CreatedAt,
             program.CreatedBy,
             program.UpdatedAt,
-            program.UpdatedBy);
+            program.UpdatedBy,
+            program.IsDeleted);
 }

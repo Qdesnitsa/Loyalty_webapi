@@ -16,7 +16,8 @@ public sealed record Program(
     DateTime CreatedAt,
     string CreatedBy,
     DateTime UpdatedAt,
-    string UpdatedBy)
+    string UpdatedBy,
+    bool IsDeleted)
 {
     public static Program FromApplication(ApplicationProgram program) =>
         new(
@@ -32,7 +33,8 @@ public sealed record Program(
             program.CreatedAt,
             program.CreatedBy,
             program.UpdatedAt,
-            program.UpdatedBy);
+            program.UpdatedBy,
+            program.IsDeleted);
 }
 
 public sealed record Achievement(
@@ -59,5 +61,7 @@ public sealed record Reward(
 }
 
 public sealed record CreateProgramResponse(Program Program);
+
+public sealed record UpdateProgramResponse(Program Program);
 
 public sealed record GetProgramResponse(Program Program);

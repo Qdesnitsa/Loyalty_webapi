@@ -34,6 +34,44 @@ GET {{Loyalty_HostAddress}}/api/programs/summer-2026
 
 ###
 
+### Update program
+PUT {{Loyalty_HostAddress}}/api/programs/summer-2026
+Content-Type: application/json
+
+{
+  "title": "Summer promo updated",
+  "description": "Updated loyalty program",
+  "state": "Active",
+  "startDate": "2026-06-01T00:00:00Z",
+  "finishDate": "2026-09-30T23:59:59Z",
+  "minTransactionAmount": 20,
+  "maxTransactionAmount": 15000,
+  "achievement": {
+    "id": "first-bonus",
+    "transactionsCountToApplyAchievement": 2,
+    "reward": {
+      "id": "bonus-percent",
+      "amount": 10,
+      "type": "Percent",
+      "target": "Bonus",
+      "usageType": "Add"
+    }
+  },
+  "updatedBy": "esidina"
+}
+
+###
+
+### Delete program
+DELETE {{Loyalty_HostAddress}}/api/programs/summer-2026
+Content-Type: application/json
+
+{
+  "updatedBy": "esidina"
+}
+
+###
+
 ### Mongo health
 GET {{Loyalty_HostAddress}}/health
 

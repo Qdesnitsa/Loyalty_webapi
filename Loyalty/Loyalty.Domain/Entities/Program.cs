@@ -15,6 +15,7 @@ public class Program
     public required string CreatedBy { get; init; }
     public DateTime UpdatedAt { get; init; }
     public required string UpdatedBy { get; init; }
+    public bool IsDeleted { get; init; }
 
     public static Program Create(
         string id,
@@ -69,7 +70,88 @@ public class Program
             CreatedAt = now,
             CreatedBy = createdBy.Trim(),
             UpdatedAt = now,
-            UpdatedBy = createdBy.Trim()
+            UpdatedBy = createdBy.Trim(),
+            IsDeleted = false
+        };
+    }
+
+    public Program Update(
+        string title,
+        string? description,
+        ProgramState state,
+        DateTime startDate,
+        DateTime finishDate,
+        decimal minTransactionAmount,
+        decimal maxTransactionAmount,
+        Achievement achievement,
+        string updatedBy)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new ArgumentException("Program title is required.", nameof(title));
+        }
+
+        if (string.IsNullOrWhiteSpace(updatedBy))
+        {
+            throw new ArgumentException("UpdatedBy is required.", nameof(updatedBy));
+        }
+
+        if (finishDate <= startDate)
+        {
+            throw new ArgumentException("Finish date must be after start date.", nameof(finishDate));
+        }
+
+        if (minTransactionAmount > maxTransactionAmount)
+        {
+            throw new ArgumentException("Min transaction amount cannot exceed max transaction amount.");
+        }
+
+        var now = DateTime.UtcNow;
+
+        return new Program
+        {
+            Id = Id,
+            Title = title.Trim(),
+            Description = description?.Trim(),
+            State = state,
+            StartDate = startDate,
+            FinishDate = finishDate,
+            MinTransactionAmount = minTransactionAmount,
+            MaxTransactionAmount = maxTransactionAmount,
+            Achievement = achievement,
+            CreatedAt = CreatedAt,
+            CreatedBy = CreatedBy,
+            UpdatedAt = now,
+            UpdatedBy = updatedBy.Trim(),
+            IsDeleted = IsDeleted
+        };
+    }
+
+    public Program Delete(string updatedBy)
+    {
+        if (string.IsNullOrWhiteSpace(updatedBy))
+        {
+            throw new ArgumentException("UpdatedBy is required.", nameof(updatedBy));
+        }
+
+        var now = DateTime.UtcNow;
+
+        return new Program
+        {
+            Id = Id,
+            Title = Title,
+            Description = Description,
+            State = State,
+            StartDate = StartDate,
+            FinishDate = FinishDate,
+            MinTransactionAmount = MinTransactionAmount,
+            MaxTransactionAmount = MaxTransactionAmount,
+            Achievement = Achievement,
+            CreatedAt = CreatedAt,
+            CreatedBy = CreatedBy,
+            UpdatedAt = now,
+            UpdatedBy = updatedBy.Trim(),
+            IsDeleted = true
         };
     }
 }

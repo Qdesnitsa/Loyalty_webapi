@@ -16,7 +16,6 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(CreateProgramResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CreateProgramResponse>> Create(
         [FromBody] CreateProgramRequest request,
         CancellationToken cancellationToken)
@@ -25,6 +24,32 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
         var response = new CreateProgramResponse(ApiProgram.FromApplication(program));
 
         return CreatedAtAction(nameof(Get), new { id = program.Id }, response);
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(UpdateProgramResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UpdateProgramResponse>> Update(
+        [FromRoute] string id,
+        [FromBody] UpdateProgramRequest request,
+        CancellationToken cancellationToken)
+    {
+        var program = await mediator.Send(ToCommand(id, request), cancellationToken);
+        return Ok(new UpdateProgramResponse(ApiProgram.FromApplication(program)));
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(
+        [FromRoute] string id,
+        [FromBody] DeleteProgramRequest request,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteProgramCommand(id, request.UpdatedBy), cancellationToken);
+        return NoContent();
     }
 
     [HttpGet("{id}")]
@@ -60,4 +85,29 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
                 }
             },
             request.CreatedBy);
+
+    private static UpdateProgramCommand ToCommand(string id, UpdateProgramRequest request) =>
+        new(
+            id,
+            request.Title,
+            request.Description,
+            request.State,
+            request.StartDate,
+            request.FinishDate,
+            request.MinTransactionAmount,
+            request.MaxTransactionAmount,
+            new DomainAchievement
+            {
+                Id = request.Achievement.Id,
+                TransactionsCountToApplyAchievement = request.Achievement.TransactionsCountToApplyAchievement ?? 0,
+                Reward = new DomainReward
+                {
+                    Id = request.Achievement.Reward.Id,
+                    Amount = request.Achievement.Reward.Amount,
+                    Type = request.Achievement.Reward.Type,
+                    Target = request.Achievement.Reward.Target,
+                    UsageType = request.Achievement.Reward.UsageType
+                }
+            },
+            request.UpdatedBy);
 }

@@ -17,10 +17,16 @@ public sealed class ProgramRepository(IMongoDatabase database) : IProgramReposit
 
     public async Task<Program?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var document = await _programs.Find(p => p.Id == id).FirstOrDefaultAsync(cancellationToken);
+        var document = await _programs.Find(p => p.Id == id && !p.IsDeleted).FirstOrDefaultAsync(cancellationToken);
         return document is null ? null : ProgramDocumentMapper.ToDomain(document);
     }
 
     public async Task AddAsync(Program program, CancellationToken cancellationToken = default) =>
         await _programs.InsertOneAsync(ProgramDocumentMapper.ToDocument(program), cancellationToken: cancellationToken);
+
+    public async Task UpdateAsync(Program program, CancellationToken cancellationToken = default) =>
+        await _programs.ReplaceOneAsync(
+            p => p.Id == program.Id,
+            ProgramDocumentMapper.ToDocument(program),
+            cancellationToken: cancellationToken);
 }

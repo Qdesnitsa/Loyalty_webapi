@@ -33,7 +33,8 @@ internal static class ProgramDocumentMapper
             CreatedAt = program.CreatedAt,
             CreatedBy = program.CreatedBy,
             UpdatedAt = program.UpdatedAt,
-            UpdatedBy = program.UpdatedBy
+            UpdatedBy = program.UpdatedBy,
+            IsDeleted = program.IsDeleted
         };
 
     public static Program ToDomain(ProgramDocument document) =>
@@ -63,6 +64,7 @@ internal static class ProgramDocumentMapper
             CreatedAt = document.CreatedAt,
             CreatedBy = document.CreatedBy,
             UpdatedAt = document.UpdatedAt,
-            UpdatedBy = document.UpdatedBy
+            UpdatedBy = document.UpdatedBy,
+            IsDeleted = document.IsDeleted
         };
 }

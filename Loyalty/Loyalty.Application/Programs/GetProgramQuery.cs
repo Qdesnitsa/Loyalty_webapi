@@ -14,7 +14,6 @@ public sealed class GetProgramQueryHandler(IProgramRepository programRepository)
         {
             throw new InvalidQueryException("Program not found", ExceptionTypes.ResourceNotFound);
         }
-
         return Program.FromDomain(domainProgram);
     }
 }

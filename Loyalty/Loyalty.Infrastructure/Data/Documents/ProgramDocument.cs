@@ -22,6 +22,7 @@ public sealed class ProgramDocument
     public required string CreatedBy { get; init; }
     public DateTime UpdatedAt { get; init; }
     public required string UpdatedBy { get; init; }
+    public bool IsDeleted { get; init; }
 }
 
 public sealed class AchievementDocument

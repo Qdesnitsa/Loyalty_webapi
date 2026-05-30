@@ -9,4 +9,6 @@ public interface IProgramRepository
     Task<Program?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
 
     Task AddAsync(Program program, CancellationToken cancellationToken = default);
+
+    Task UpdateAsync(Program program, CancellationToken cancellationToken = default);
 }
