@@ -1,6 +1,7 @@
 using Loyalty.Application.Abstractions;
 using Loyalty.Infrastructure.Data;
 using Loyalty.Infrastructure.Health;
+using Loyalty.Infrastructure.Messaging;
 using Loyalty.Infrastructure.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,9 @@ public static class DependencyInjection
             .AddCheck<MongoHealthCheck>("mongodb");
 
         services.AddScoped<IProgramRepository, ProgramRepository>();
+
+        services.Configure<KafkaConsumerConfig>(configuration.GetSection(KafkaConsumerConfig.SectionName));
+        services.AddHostedService<TransactionCreatedConsumer>();
 
         return services;
     }

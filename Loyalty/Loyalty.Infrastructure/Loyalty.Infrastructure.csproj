@@ -16,11 +16,19 @@
 
     <ItemGroup>
 
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.5"/>
 
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.5"/>
 
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0"/>
+        <PackageReference Include="Confluent.Kafka" Version="2.8.0"/>
+
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5"/>
+
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.5"/>
+
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5"/>
+
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.5"/>
 
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.0"/>
 
@@ -37,6 +45,8 @@
         <ProjectReference Include="..\Loyalty.Application\Loyalty.Application.csproj"/>
 
         <ProjectReference Include="..\Loyalty.Domain\Loyalty.Domain.csproj"/>
+
+        <ProjectReference Include="..\..\..\WebMoney\WebMoney\WebMoney.Loyalty.Events\WebMoney.Loyalty.Events.csproj"/>
 
     </ItemGroup>
 

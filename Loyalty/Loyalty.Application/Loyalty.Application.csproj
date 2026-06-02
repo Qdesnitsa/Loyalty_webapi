@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Loyalty.Domain\Loyalty.Domain.csproj"/>
+        <ProjectReference Include="..\..\..\WebMoney\WebMoney\WebMoney.Loyalty.Events\WebMoney.Loyalty.Events.csproj"/>
     </ItemGroup>
 
 </Project>
