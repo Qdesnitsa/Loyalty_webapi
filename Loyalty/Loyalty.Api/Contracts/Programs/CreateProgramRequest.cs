@@ -11,6 +11,7 @@ public sealed record CreateProgramRequest(
     DateTime FinishDate,
     decimal MinTransactionAmount,
     decimal MaxTransactionAmount,
+    string TransactionType,
     AchievementRequest Achievement,
     string CreatedBy);
 

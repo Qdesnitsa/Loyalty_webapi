@@ -79,6 +79,7 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
             request.FinishDate,
             request.MinTransactionAmount,
             request.MaxTransactionAmount,
+            request.TransactionType,
             new DomainAchievement
             {
                 Id = request.Achievement.Id,
@@ -104,6 +105,7 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
             request.FinishDate,
             request.MinTransactionAmount,
             request.MaxTransactionAmount,
+            request.TransactionType,
             new DomainAchievement
             {
                 Id = request.Achievement.Id,

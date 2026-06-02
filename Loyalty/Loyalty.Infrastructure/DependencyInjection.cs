@@ -31,6 +31,7 @@ public static class DependencyInjection
             .AddCheck<MongoHealthCheck>("mongodb");
 
         services.AddScoped<IProgramRepository, ProgramRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
 
         services.Configure<KafkaConsumerConfig>(configuration.GetSection(KafkaConsumerConfig.SectionName));
         services.AddHostedService<TransactionCreatedConsumer>();

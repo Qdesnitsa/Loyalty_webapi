@@ -17,6 +17,7 @@ public sealed class ProgramDocument
     public DateTime FinishDate { get; init; }
     public decimal MinTransactionAmount { get; init; }
     public decimal MaxTransactionAmount { get; init; }
+    public required string TransactionType { get; init; }
     public required AchievementDocument Achievement { get; init; }
     public DateTime CreatedAt { get; init; }
     public required string CreatedBy { get; init; }

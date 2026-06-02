@@ -17,6 +17,7 @@ internal static class ProgramDocumentMapper
             FinishDate = program.FinishDate,
             MinTransactionAmount = program.MinTransactionAmount,
             MaxTransactionAmount = program.MaxTransactionAmount,
+            TransactionType = program.TransactionType,
             Achievement = new AchievementDocument
             {
                 Id = program.Achievement.Id,
@@ -48,6 +49,7 @@ internal static class ProgramDocumentMapper
             FinishDate = document.FinishDate,
             MinTransactionAmount = document.MinTransactionAmount,
             MaxTransactionAmount = document.MaxTransactionAmount,
+            TransactionType = document.TransactionType,
             Achievement = new Achievement
             {
                 Id = document.Achievement.Id,

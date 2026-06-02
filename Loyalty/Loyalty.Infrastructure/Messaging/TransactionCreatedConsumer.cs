@@ -1,4 +1,7 @@
 using Confluent.Kafka;
+using Loyalty.Application.Transactions;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,14 +11,12 @@ namespace Loyalty.Infrastructure.Messaging;
 
 public sealed class TransactionCreatedConsumer(
     IOptions<KafkaConsumerConfig> config,
+    IServiceScopeFactory scopeFactory,
     ILogger<TransactionCreatedConsumer> logger) : BackgroundService
 {
     private readonly KafkaConsumerConfig _config = config.Value;
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken) =>
-        Task.Run(() => ConsumeLoop(stoppingToken), stoppingToken);
-
-    private void ConsumeLoop(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var consumerConfig = new ConsumerConfig
         {
@@ -52,24 +53,27 @@ public sealed class TransactionCreatedConsumer(
                     if (@event is null)
                     {
                         logger.LogWarning(
-                            "Skipping Kafka message with invalid payload at offset {Offset}", result.Offset);
+                            "Skipping Kafka message with invalid payload at offset {Offset}",
+                            result.Offset);
                         consumer.Commit(result);
                         continue;
                     }
 
-                    logger.LogInformation(
-                        "Received {EventType} for transaction {TransactionId} (event {EventId}, card {CardId}, amount {Amount})",
-                        @event.EventType,
-                        @event.Payload.TransactionId,
-                        @event.EventId,
-                        @event.Payload.CardId,
-                        @event.Payload.Amount);
+                    using (var scope = scopeFactory.CreateScope())
+                    {
+                        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                        await mediator.Send(new ProcessTransactionCreatedCommand(@event), stoppingToken);
+                    }
 
                     consumer.Commit(result);
                 }
                 catch (ConsumeException ex)
                 {
                     logger.LogError(ex, "Kafka consume error");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to process Kafka message");
                 }
             }
         }

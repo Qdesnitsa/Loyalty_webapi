@@ -10,6 +10,7 @@ public class Program
     public DateTime FinishDate { get; init; }
     public decimal MinTransactionAmount { get; init; }
     public decimal MaxTransactionAmount { get; init; }
+    public required string TransactionType { get; init; }
     public required Achievement Achievement { get; init; }
     public DateTime CreatedAt { get; init; }
     public required string CreatedBy { get; init; }
@@ -26,6 +27,7 @@ public class Program
         DateTime finishDate,
         decimal minTransactionAmount,
         decimal maxTransactionAmount,
+        string transactionType,
         Achievement achievement,
         string createdBy)
     {
@@ -54,6 +56,11 @@ public class Program
             throw new ArgumentException("Min transaction amount cannot exceed max transaction amount.");
         }
 
+        if (string.IsNullOrWhiteSpace(transactionType))
+        {
+            throw new ArgumentException("Transaction type is required.", nameof(transactionType));
+        }
+
         var now = DateTime.UtcNow;
 
         return new Program
@@ -66,6 +73,7 @@ public class Program
             FinishDate = finishDate,
             MinTransactionAmount = minTransactionAmount,
             MaxTransactionAmount = maxTransactionAmount,
+            TransactionType = transactionType.Trim(),
             Achievement = achievement,
             CreatedAt = now,
             CreatedBy = createdBy.Trim(),
@@ -83,6 +91,7 @@ public class Program
         DateTime finishDate,
         decimal minTransactionAmount,
         decimal maxTransactionAmount,
+        string transactionType,
         Achievement achievement,
         string updatedBy)
     {
@@ -106,6 +115,11 @@ public class Program
             throw new ArgumentException("Min transaction amount cannot exceed max transaction amount.");
         }
 
+        if (string.IsNullOrWhiteSpace(transactionType))
+        {
+            throw new ArgumentException("Transaction type is required.", nameof(transactionType));
+        }
+
         var now = DateTime.UtcNow;
 
         return new Program
@@ -118,6 +132,7 @@ public class Program
             FinishDate = finishDate,
             MinTransactionAmount = minTransactionAmount,
             MaxTransactionAmount = maxTransactionAmount,
+            TransactionType = transactionType.Trim(),
             Achievement = achievement,
             CreatedAt = CreatedAt,
             CreatedBy = CreatedBy,
@@ -146,6 +161,7 @@ public class Program
             FinishDate = FinishDate,
             MinTransactionAmount = MinTransactionAmount,
             MaxTransactionAmount = MaxTransactionAmount,
+            TransactionType = TransactionType,
             Achievement = Achievement,
             CreatedAt = CreatedAt,
             CreatedBy = CreatedBy,

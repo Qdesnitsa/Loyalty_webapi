@@ -22,6 +22,7 @@ public sealed class UpdateProgramCommandHandler(IProgramRepository programReposi
             command.FinishDate,
             command.MinTransactionAmount,
             command.MaxTransactionAmount,
+            command.TransactionType,
             command.Achievement,
             command.UpdatedBy);
 

@@ -23,6 +23,7 @@ public sealed class CreateProgramCommandHandler(IProgramRepository programReposi
             command.FinishDate,
             command.MinTransactionAmount,
             command.MaxTransactionAmount,
+            command.TransactionType,
             command.Achievement,
             command.CreatedBy);
 
