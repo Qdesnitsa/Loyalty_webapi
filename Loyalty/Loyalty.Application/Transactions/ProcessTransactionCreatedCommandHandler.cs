@@ -8,6 +8,7 @@ namespace Loyalty.Application.Transactions;
 public sealed class ProcessTransactionCreatedCommandHandler(
     ITransactionRepository transactionRepository,
     IProgramRepository programRepository,
+    IParticipationRepository participationRepository,
     ILogger<ProcessTransactionCreatedCommandHandler> logger)
     : ICommandHandler<ProcessTransactionCreatedCommand>
 {
@@ -63,5 +64,65 @@ public sealed class ProcessTransactionCreatedCommandHandler(
             payload.CardId,
             payload.Amount,
             programId ?? "none");
+
+        if (programId is null)
+        {
+            return;
+        }
+
+        await UpdateParticipationProgressAsync(
+            payload.CardId,
+            programId,
+            cancellationToken);
+    }
+
+    private async Task UpdateParticipationProgressAsync(
+        int cardId,
+        string programId,
+        CancellationToken cancellationToken)
+    {
+        var program = await programRepository.GetByIdAsync(programId, cancellationToken);
+        if (program is null)
+        {
+            logger.LogWarning(
+                "Program {ProgramId} was not found while updating participation for card {CardId}",
+                programId,
+                cardId);
+            return;
+        }
+
+        var requiredCount = program.Achievement.TransactionsCountToApplyAchievement;
+        if (requiredCount <= 1)
+        {
+            logger.LogDebug(
+                "Card {CardId} is eligible for immediate reward in program {ProgramId}",
+                cardId,
+                programId);
+            return;
+        }
+
+        var progress = await participationRepository.RecordQualifyingTransactionAsync(
+            cardId,
+            programId,
+            requiredCount,
+            cancellationToken);
+
+        if (progress.RewardThresholdReached)
+        {
+            logger.LogInformation(
+                "Card {CardId} reached reward threshold in program {ProgramId} ({Count}/{Required})",
+                cardId,
+                programId,
+                progress.QualifyingTransactionCount,
+                requiredCount);
+            return;
+        }
+
+        logger.LogDebug(
+            "Card {CardId} participation progress in program {ProgramId}: {Count}/{Required}",
+            cardId,
+            programId,
+            progress.QualifyingTransactionCount,
+            requiredCount);
     }
 }

@@ -32,6 +32,7 @@ public static class DependencyInjection
 
         services.AddScoped<IProgramRepository, ProgramRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IParticipationRepository, ParticipationRepository>();
 
         services.Configure<KafkaConsumerConfig>(configuration.GetSection(KafkaConsumerConfig.SectionName));
         services.AddHostedService<TransactionCreatedConsumer>();
