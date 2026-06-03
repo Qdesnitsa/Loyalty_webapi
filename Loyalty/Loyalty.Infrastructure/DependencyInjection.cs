@@ -1,6 +1,7 @@
 using Loyalty.Application.Abstractions;
 using Loyalty.Infrastructure.Data;
 using Loyalty.Infrastructure.Health;
+using Loyalty.Infrastructure.Integration;
 using Loyalty.Infrastructure.Messaging;
 using Loyalty.Infrastructure.Options;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,14 @@ public static class DependencyInjection
         services.AddScoped<IProgramRepository, ProgramRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<IParticipationRepository, ParticipationRepository>();
+
+        services.Configure<WebMoneyOptions>(configuration.GetSection(WebMoneyOptions.SectionName));
+        services.AddHttpClient<IWebMoneyBonusClient, WebMoneyBonusClient>((serviceProvider, client) =>
+        {
+            var options = serviceProvider.GetRequiredService<
+                Microsoft.Extensions.Options.IOptions<WebMoneyOptions>>().Value;
+            client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
+        });
 
         services.Configure<KafkaConsumerConfig>(configuration.GetSection(KafkaConsumerConfig.SectionName));
         services.AddHostedService<TransactionCreatedConsumer>();

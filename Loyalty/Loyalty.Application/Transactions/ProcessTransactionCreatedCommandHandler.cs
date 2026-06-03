@@ -9,6 +9,7 @@ public sealed class ProcessTransactionCreatedCommandHandler(
     ITransactionRepository transactionRepository,
     IProgramRepository programRepository,
     IParticipationRepository participationRepository,
+    IWebMoneyBonusClient webMoneyBonusClient,
     ILogger<ProcessTransactionCreatedCommandHandler> logger)
     : ICommandHandler<ProcessTransactionCreatedCommand>
 {
@@ -70,59 +71,94 @@ public sealed class ProcessTransactionCreatedCommandHandler(
             return;
         }
 
-        await UpdateParticipationProgressAsync(
+        await ApplyProgramRewardAsync(
+            transactionId,
             payload.CardId,
             programId,
+            payload.Amount,
             cancellationToken);
     }
 
-    private async Task UpdateParticipationProgressAsync(
+    private async Task ApplyProgramRewardAsync(
+        string transactionId,
         int cardId,
         string programId,
+        decimal transactionAmount,
         CancellationToken cancellationToken)
     {
         var program = await programRepository.GetByIdAsync(programId, cancellationToken);
         if (program is null)
         {
             logger.LogWarning(
-                "Program {ProgramId} was not found while updating participation for card {CardId}",
+                "Program {ProgramId} was not found while applying reward for card {CardId}",
                 programId,
                 cardId);
             return;
         }
 
         var requiredCount = program.Achievement.TransactionsCountToApplyAchievement;
+        var shouldAccrue = false;
+
         if (requiredCount <= 1)
         {
-            logger.LogDebug(
-                "Card {CardId} is eligible for immediate reward in program {ProgramId}",
-                cardId,
-                programId);
-            return;
+            shouldAccrue = true;
         }
-
-        var progress = await participationRepository.RecordQualifyingTransactionAsync(
-            cardId,
-            programId,
-            requiredCount,
-            cancellationToken);
-
-        if (progress.RewardThresholdReached)
+        else
         {
-            logger.LogInformation(
-                "Card {CardId} reached reward threshold in program {ProgramId} ({Count}/{Required})",
+            var progress = await participationRepository.RecordQualifyingTransactionAsync(
                 cardId,
                 programId,
-                progress.QualifyingTransactionCount,
-                requiredCount);
+                requiredCount,
+                cancellationToken);
+
+            if (progress.RewardThresholdReached)
+            {
+                logger.LogInformation(
+                    "Card {CardId} reached reward threshold in program {ProgramId} ({Count}/{Required})",
+                    cardId,
+                    programId,
+                    progress.QualifyingTransactionCount,
+                    requiredCount);
+                shouldAccrue = true;
+            }
+            else
+            {
+                logger.LogDebug(
+                    "Card {CardId} participation progress in program {ProgramId}: {Count}/{Required}",
+                    cardId,
+                    programId,
+                    progress.QualifyingTransactionCount,
+                    requiredCount);
+            }
+        }
+
+        if (!shouldAccrue)
+        {
             return;
         }
 
-        logger.LogDebug(
-            "Card {CardId} participation progress in program {ProgramId}: {Count}/{Required}",
+        var bonusAmount = RewardCalculator.Calculate(program.Achievement.Reward, transactionAmount);
+        if (bonusAmount <= 0)
+        {
+            logger.LogWarning(
+                "Skipping bonus accrual for transaction {TransactionId}: calculated amount is {BonusAmount}",
+                transactionId,
+                bonusAmount);
+            return;
+        }
+
+        await webMoneyBonusClient.AccrueBonusAsync(
             cardId,
+            bonusAmount,
+            transactionId,
             programId,
-            progress.QualifyingTransactionCount,
-            requiredCount);
+            cancellationToken);
+
+        logger.LogInformation(
+            "Accrued {BonusAmount} bonus for card {CardId} from transaction {TransactionId} (program {ProgramId})",
+            bonusAmount,
+            cardId,
+            transactionId,
+            programId);
     }
 }

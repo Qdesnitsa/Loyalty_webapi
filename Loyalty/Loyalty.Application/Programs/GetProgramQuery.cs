@@ -2,6 +2,7 @@ using Loyalty.Application.Abstractions;
 using Loyalty.Application.Programs.Models;
 
 namespace Loyalty.Application.Programs;
+
 public sealed record GetProgramQuery(string Id) : IQuery<Program>;
 
 public sealed class GetProgramQueryHandler(IProgramRepository programRepository)

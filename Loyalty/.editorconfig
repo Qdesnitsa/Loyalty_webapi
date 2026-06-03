@@ -8,8 +8,14 @@ insert_final_newline = true
 charset = utf-8
 trim_trailing_whitespace = true
 
-# Avoid excessive blank lines (Rider/ReSharper respect these where supported)
 dotnet_style_allow_multiple_blank_lines_experimental = false
+
+# Rider / ReSharper: no blank lines inside methods, one between type members
+resharper_blank_lines_inside_method = 0
+resharper_blank_lines_inside_type = 1
+resharper_blank_lines_around_single_line_invocable = 0
+resharper_keep_blank_lines_in_code = 1
+resharper_csharp_keep_blank_lines_in_code = 1
 
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
