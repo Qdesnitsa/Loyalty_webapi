@@ -1,7 +1,9 @@
 @Loyalty_HostAddress = http://localhost:5281
+@Loyalty_ApiKey = dev-loyalty-api-key
 
 ### Create program
 POST {{Loyalty_HostAddress}}/api/programs
+X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 Content-Type: application/json
 
 {
@@ -31,16 +33,19 @@ Content-Type: application/json
 
 ### Get all programs
 GET {{Loyalty_HostAddress}}/api/programs
+X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 
 ###
 
 ### Get program
 GET {{Loyalty_HostAddress}}/api/programs/summer-2026
+X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 
 ###
 
 ### Update program
 PUT {{Loyalty_HostAddress}}/api/programs/summer-2026
+X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 Content-Type: application/json
 
 {
@@ -69,6 +74,7 @@ Content-Type: application/json
 
 ### Delete program
 DELETE {{Loyalty_HostAddress}}/api/programs/summer-2026
+X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 Content-Type: application/json
 
 {

@@ -11,6 +11,8 @@ public sealed class ProgramDocument
     public required string Id { get; init; }
     public required string Title { get; init; }
     public string? Description { get; init; }
+
+    [BsonRepresentation(BsonType.String)]
     public ProgramState State { get; init; }
     public DateTime StartDate { get; init; }
     public DateTime FinishDate { get; init; }
@@ -36,7 +38,13 @@ public sealed class RewardDocument
 {
     public required string Id { get; init; }
     public decimal Amount { get; init; }
+
+    [BsonRepresentation(BsonType.String)]
     public RewardValueType Type { get; init; }
+
+    [BsonRepresentation(BsonType.String)]
     public RewardTarget Target { get; init; }
+
+    [BsonRepresentation(BsonType.String)]
     public RewardValueUsageType UsageType { get; init; }
 }

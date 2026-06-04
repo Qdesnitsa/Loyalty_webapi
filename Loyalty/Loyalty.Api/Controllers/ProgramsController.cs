@@ -1,6 +1,7 @@
 using Loyalty.Api.Contracts.Programs;
 using Loyalty.Application.Programs;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiProgram = Loyalty.Api.Contracts.Programs.Program;
 using DomainAchievement = Loyalty.Domain.Entities.Achievement;
@@ -8,6 +9,7 @@ using DomainReward = Loyalty.Domain.Entities.Reward;
 
 namespace Loyalty.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/programs")]
 public sealed class ProgramsController(IMediator mediator) : ControllerBase
