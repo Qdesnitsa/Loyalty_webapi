@@ -16,7 +16,7 @@ public sealed record Reward(
 
 public sealed record Achievement(
     string Id,
-    int? TransactionsCountToApplyAchievement,
+    int TransactionsCountToApplyAchievement,
     Reward Reward)
 {
     public static Achievement FromDomain(Domain.Entities.Achievement achievement) =>

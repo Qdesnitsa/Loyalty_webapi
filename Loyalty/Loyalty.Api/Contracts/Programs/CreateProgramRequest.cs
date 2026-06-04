@@ -3,7 +3,6 @@ using Loyalty.Domain.Entities;
 namespace Loyalty.Api.Contracts.Programs;
 
 public sealed record CreateProgramRequest(
-    string Id,
     string Title,
     string? Description,
     ProgramState State,
@@ -12,16 +11,14 @@ public sealed record CreateProgramRequest(
     decimal MinTransactionAmount,
     decimal MaxTransactionAmount,
     string TransactionType,
-    AchievementRequest Achievement,
+    CreateAchievementRequest Achievement,
     string CreatedBy);
 
-public sealed record AchievementRequest(
-    string Id,
-    int? TransactionsCountToApplyAchievement,
-    RewardRequest Reward);
+public sealed record CreateAchievementRequest(
+    int TransactionsCountToApplyAchievement,
+    CreateRewardRequest Reward);
 
-public sealed record RewardRequest(
-    string Id,
+public sealed record CreateRewardRequest(
     decimal Amount,
     RewardValueType Type,
     RewardTarget Target,

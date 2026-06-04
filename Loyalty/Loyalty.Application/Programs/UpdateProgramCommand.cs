@@ -13,5 +13,5 @@ public sealed record UpdateProgramCommand(
     decimal MinTransactionAmount,
     decimal MaxTransactionAmount,
     string TransactionType,
-    Achievement Achievement,
+    CreateProgramAchievementData Achievement,
     string UpdatedBy) : ICommand<ApplicationProgram>;

@@ -1,5 +1,6 @@
 @Loyalty_HostAddress = http://localhost:5281
 @Loyalty_ApiKey = dev-loyalty-api-key
+@ProgramId = replace-with-id-from-create-response
 
 ### Create program
 POST {{Loyalty_HostAddress}}/api/programs
@@ -7,7 +8,6 @@ X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 Content-Type: application/json
 
 {
-  "id": "summer-2026",
   "title": "Summer promo",
   "description": "First loyalty program",
   "state": "Active",
@@ -15,11 +15,10 @@ Content-Type: application/json
   "finishDate": "2026-08-31T23:59:59Z",
   "minTransactionAmount": 10,
   "maxTransactionAmount": 10000,
+  "transactionType": "Payment",
   "achievement": {
-    "id": "first-bonus",
     "transactionsCountToApplyAchievement": 1,
     "reward": {
-      "id": "bonus-percent",
       "amount": 5,
       "type": "Percent",
       "target": "Bonus",
@@ -38,13 +37,13 @@ X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 ###
 
 ### Get program
-GET {{Loyalty_HostAddress}}/api/programs/summer-2026
+GET {{Loyalty_HostAddress}}/api/programs/{{ProgramId}}
 X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 
 ###
 
 ### Update program
-PUT {{Loyalty_HostAddress}}/api/programs/summer-2026
+PUT {{Loyalty_HostAddress}}/api/programs/{{ProgramId}}
 X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 Content-Type: application/json
 
@@ -56,11 +55,10 @@ Content-Type: application/json
   "finishDate": "2026-09-30T23:59:59Z",
   "minTransactionAmount": 20,
   "maxTransactionAmount": 15000,
+  "transactionType": "Payment",
   "achievement": {
-    "id": "first-bonus",
     "transactionsCountToApplyAchievement": 2,
     "reward": {
-      "id": "bonus-percent",
       "amount": 10,
       "type": "Percent",
       "target": "Bonus",
@@ -73,7 +71,7 @@ Content-Type: application/json
 ###
 
 ### Delete program
-DELETE {{Loyalty_HostAddress}}/api/programs/summer-2026
+DELETE {{Loyalty_HostAddress}}/api/programs/{{ProgramId}}
 X-Loyalty-Api-Key: {{Loyalty_ApiKey}}
 Content-Type: application/json
 

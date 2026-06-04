@@ -30,7 +30,7 @@ public sealed class ProgramDocument
 public sealed class AchievementDocument
 {
     public required string Id { get; init; }
-    public int? TransactionsCountToApplyAchievement { get; init; }
+    public int TransactionsCountToApplyAchievement { get; init; }
     public required RewardDocument Reward { get; init; }
 }
 

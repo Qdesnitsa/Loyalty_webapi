@@ -1,6 +1,8 @@
 using Loyalty.Application.Abstractions;
 using Loyalty.Application.Programs.Models;
+using DomainAchievement = Loyalty.Domain.Entities.Achievement;
 using DomainProgram = Loyalty.Domain.Entities.Program;
+using DomainReward = Loyalty.Domain.Entities.Reward;
 
 namespace Loyalty.Application.Programs;
 
@@ -9,13 +11,23 @@ public sealed class CreateProgramCommandHandler(IProgramRepository programReposi
 {
     public async Task<Program> Handle(CreateProgramCommand command, CancellationToken cancellationToken)
     {
-        if (await programRepository.ExistsAsync(command.Id, cancellationToken))
+        var programId = GenerateId();
+        var achievement = new DomainAchievement
         {
-            throw new InvalidCommandException("Program already exists", ExceptionTypes.ResourceAlreadyExists);
-        }
+            Id = GenerateId(),
+            TransactionsCountToApplyAchievement = command.Achievement.TransactionsCountToApplyAchievement,
+            Reward = new DomainReward
+            {
+                Id = GenerateId(),
+                Amount = command.Achievement.Reward.Amount,
+                Type = command.Achievement.Reward.Type,
+                Target = command.Achievement.Reward.Target,
+                UsageType = command.Achievement.Reward.UsageType
+            }
+        };
 
         var domainProgram = DomainProgram.Create(
-            command.Id,
+            programId,
             command.Title,
             command.Description,
             command.State,
@@ -24,11 +36,13 @@ public sealed class CreateProgramCommandHandler(IProgramRepository programReposi
             command.MinTransactionAmount,
             command.MaxTransactionAmount,
             command.TransactionType,
-            command.Achievement,
+            achievement,
             command.CreatedBy);
 
         await programRepository.AddAsync(domainProgram, cancellationToken);
 
         return Program.FromDomain(domainProgram);
     }
+
+    private static string GenerateId() => Guid.NewGuid().ToString("N");
 }

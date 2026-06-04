@@ -4,7 +4,6 @@ using ApplicationProgram = Loyalty.Application.Programs.Models.Program;
 namespace Loyalty.Application.Programs;
 
 public sealed record CreateProgramCommand(
-    string Id,
     string Title,
     string? Description,
     ProgramState State,
@@ -13,5 +12,15 @@ public sealed record CreateProgramCommand(
     decimal MinTransactionAmount,
     decimal MaxTransactionAmount,
     string TransactionType,
-    Achievement Achievement,
+    CreateProgramAchievementData Achievement,
     string CreatedBy) : ICommand<ApplicationProgram>;
+
+public sealed record CreateProgramAchievementData(
+    int TransactionsCountToApplyAchievement,
+    CreateProgramRewardData Reward);
+
+public sealed record CreateProgramRewardData(
+    decimal Amount,
+    RewardValueType Type,
+    RewardTarget Target,
+    RewardValueUsageType UsageType);

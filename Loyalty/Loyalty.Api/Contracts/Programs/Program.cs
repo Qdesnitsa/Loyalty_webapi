@@ -41,7 +41,7 @@ public sealed record Program(
 
 public sealed record Achievement(
     string Id,
-    int? TransactionsCountToApplyAchievement,
+    int TransactionsCountToApplyAchievement,
     Reward Reward)
 {
     public static Achievement FromApplication(Application.Programs.Models.Achievement achievement) =>

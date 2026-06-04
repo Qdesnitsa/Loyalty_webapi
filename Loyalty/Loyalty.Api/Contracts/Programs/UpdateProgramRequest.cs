@@ -11,5 +11,5 @@ public sealed record UpdateProgramRequest(
     decimal MinTransactionAmount,
     decimal MaxTransactionAmount,
     string TransactionType,
-    AchievementRequest Achievement,
+    CreateAchievementRequest Achievement,
     string UpdatedBy);

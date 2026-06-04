@@ -4,8 +4,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiProgram = Loyalty.Api.Contracts.Programs.Program;
-using DomainAchievement = Loyalty.Domain.Entities.Achievement;
-using DomainReward = Loyalty.Domain.Entities.Reward;
 
 namespace Loyalty.Api.Controllers;
 
@@ -17,7 +15,6 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(CreateProgramResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<CreateProgramResponse>> Create(
         [FromBody] CreateProgramRequest request,
         CancellationToken cancellationToken)
@@ -73,7 +70,6 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
 
     private static CreateProgramCommand ToCommand(CreateProgramRequest request) =>
         new(
-            request.Id,
             request.Title,
             request.Description,
             request.State,
@@ -82,19 +78,13 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
             request.MinTransactionAmount,
             request.MaxTransactionAmount,
             request.TransactionType,
-            new DomainAchievement
-            {
-                Id = request.Achievement.Id,
-                TransactionsCountToApplyAchievement = request.Achievement.TransactionsCountToApplyAchievement ?? 0,
-                Reward = new DomainReward
-                {
-                    Id = request.Achievement.Reward.Id,
-                    Amount = request.Achievement.Reward.Amount,
-                    Type = request.Achievement.Reward.Type,
-                    Target = request.Achievement.Reward.Target,
-                    UsageType = request.Achievement.Reward.UsageType
-                }
-            },
+            new CreateProgramAchievementData(
+                request.Achievement.TransactionsCountToApplyAchievement,
+                new CreateProgramRewardData(
+                    request.Achievement.Reward.Amount,
+                    request.Achievement.Reward.Type,
+                    request.Achievement.Reward.Target,
+                    request.Achievement.Reward.UsageType)),
             request.CreatedBy);
 
     private static UpdateProgramCommand ToCommand(string id, UpdateProgramRequest request) =>
@@ -108,18 +98,12 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
             request.MinTransactionAmount,
             request.MaxTransactionAmount,
             request.TransactionType,
-            new DomainAchievement
-            {
-                Id = request.Achievement.Id,
-                TransactionsCountToApplyAchievement = request.Achievement.TransactionsCountToApplyAchievement ?? 0,
-                Reward = new DomainReward
-                {
-                    Id = request.Achievement.Reward.Id,
-                    Amount = request.Achievement.Reward.Amount,
-                    Type = request.Achievement.Reward.Type,
-                    Target = request.Achievement.Reward.Target,
-                    UsageType = request.Achievement.Reward.UsageType
-                }
-            },
+            new CreateProgramAchievementData(
+                request.Achievement.TransactionsCountToApplyAchievement,
+                new CreateProgramRewardData(
+                    request.Achievement.Reward.Amount,
+                    request.Achievement.Reward.Type,
+                    request.Achievement.Reward.Target,
+                    request.Achievement.Reward.UsageType)),
             request.UpdatedBy);
 }
