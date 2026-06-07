@@ -59,8 +59,14 @@ public sealed class TransactionCreatedConsumer(
                         continue;
                     }
 
-                    using (var scope = scopeFactory.CreateScope())
+                    using (logger.BeginScope(new Dictionary<string, object>
                     {
+                        ["EventId"] = @event.EventId,
+                        ["TransactionId"] = @event.Payload.TransactionId,
+                        ["KafkaOffset"] = result.Offset.Value
+                    }))
+                    {
+                        using var scope = scopeFactory.CreateScope();
                         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                         await mediator.Send(new ProcessTransactionCreatedCommand(@event), stoppingToken);
                     }

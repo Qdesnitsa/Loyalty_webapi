@@ -7,6 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
+        <PackageReference Include="Serilog.Expressions" Version="5.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Loyalty.Application\Loyalty.Application.csproj"/>
         <ProjectReference Include="..\Loyalty.Infrastructure\Loyalty.Infrastructure.csproj"/>
     </ItemGroup>

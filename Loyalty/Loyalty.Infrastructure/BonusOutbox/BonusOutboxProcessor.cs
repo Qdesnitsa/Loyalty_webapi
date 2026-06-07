@@ -56,6 +56,10 @@ public sealed class BonusOutboxProcessor(
                     await outboxRepository.DeleteAsync(entry.SourceTransactionId, cancellationToken);
                     processedCount++;
 
+                    logger.LogDebug(
+                        "Successfully delivered bonus outbox item for transaction {SourceTransactionId}",
+                        entry.SourceTransactionId);
+
                     logger.LogInformation(
                         "Delivered bonus accrual for transaction {SourceTransactionId} (card {CardId}, amount {Amount})",
                         entry.SourceTransactionId,
