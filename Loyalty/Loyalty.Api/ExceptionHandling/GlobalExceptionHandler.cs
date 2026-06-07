@@ -1,4 +1,5 @@
 using System.Text.Json;
+using FluentValidation;
 using Loyalty.Application;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,33 @@ public sealed class GlobalExceptionHandler(
         Exception exception,
         CancellationToken cancellationToken)
     {
+        if (exception is ValidationException validationException)
+        {
+            var errors = validationException.Errors
+                .GroupBy(failure => failure.PropertyName)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(failure => failure.ErrorMessage).ToArray());
+
+            var validationProblem = new ValidationProblemDetails(errors)
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Validation failed",
+                Instance = httpContext.Request.Path
+            };
+
+            logger.LogWarning(
+                exception,
+                "Request failed with {StatusCode} for {Method} {Path}",
+                StatusCodes.Status400BadRequest,
+                httpContext.Request.Method,
+                httpContext.Request.Path);
+
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await httpContext.Response.WriteAsJsonAsync(validationProblem, cancellationToken);
+            return true;
+        }
+
         var problem = CreateProblemDetails(httpContext, exception);
         var statusCode = problem.Status ?? StatusCodes.Status500InternalServerError;
 

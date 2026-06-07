@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using FluentValidation;
 using Loyalty.Application.Transactions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,9 +40,11 @@ public sealed class TransactionCreatedConsumer(
         {
             while (!stoppingToken.IsCancellationRequested)
             {
+                ConsumeResult<string, string>? result = null;
+
                 try
                 {
-                    var result = consumer.Consume(stoppingToken);
+                    result = consumer.Consume(stoppingToken);
                     if (result.Message.Value is null)
                     {
                         logger.LogWarning("Skipping Kafka message with empty value at offset {Offset}", result.Offset);
@@ -76,6 +79,14 @@ public sealed class TransactionCreatedConsumer(
                 catch (ConsumeException ex)
                 {
                     logger.LogError(ex, "Kafka consume error");
+                }
+                catch (ValidationException ex) when (result is not null)
+                {
+                    logger.LogWarning(
+                        ex,
+                        "Skipping Kafka message with invalid event data at offset {Offset}",
+                        result.Offset);
+                    consumer.Commit(result);
                 }
                 catch (Exception ex)
                 {
