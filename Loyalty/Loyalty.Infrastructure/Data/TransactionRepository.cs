@@ -28,4 +28,26 @@ public sealed class TransactionRepository(IMongoDatabase database) : ITransactio
             throw new InvalidOperationException("Transaction already exists in database.", ex);
         }
     }
+
+    public async Task SetBonusAmountToAccrueAsync(
+        string id,
+        decimal amount,
+        CancellationToken cancellationToken = default)
+    {
+        var now = DateTime.UtcNow;
+        var update = Builders<Documents.TransactionDocument>.Update
+            .Set(t => t.BonusAmountToAccrue, amount)
+            .Set(t => t.UpdatedAt, now);
+
+        var filterBuilder = Builders<Documents.TransactionDocument>.Filter;
+        var filter = filterBuilder.And(
+            filterBuilder.Eq(t => t.Id, id),
+            filterBuilder.Eq(t => t.BonusAmountToAccrue, null)
+        );
+
+        await _transactions.UpdateOneAsync(
+            filter,
+            update,
+            cancellationToken: cancellationToken);
+    }
 }

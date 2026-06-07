@@ -16,6 +16,8 @@ public sealed class Transaction
     public DateTime CreatedAt { get; init; }
     public required string CreatedBy { get; init; }
     public DateTime ReceivedAt { get; init; }
+    public DateTime UpdatedAt { get; init; }
+    public decimal? BonusAmountToAccrue { get; init; }
 
     public static Transaction CreateFromWebMoney(
         int transactionId,
@@ -55,6 +57,8 @@ public sealed class Transaction
             throw new ArgumentException("CreatedBy is required.", nameof(createdBy));
         }
 
+        var now = DateTime.UtcNow;
+
         return new Transaction
         {
             Id = transactionId.ToString(CultureInfo.InvariantCulture),
@@ -68,7 +72,8 @@ public sealed class Transaction
             ProgramId = programId,
             CreatedAt = createdAt,
             CreatedBy = createdBy,
-            ReceivedAt = DateTime.UtcNow
+            ReceivedAt = now,
+            UpdatedAt = now
         };
     }
 }

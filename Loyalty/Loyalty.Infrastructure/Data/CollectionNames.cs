@@ -7,4 +7,6 @@ public static class CollectionNames
     public const string Transactions = "transactions";
 
     public const string Participations = "participations";
+
+    public const string BonusOutbox = "bonus_outbox";
 }

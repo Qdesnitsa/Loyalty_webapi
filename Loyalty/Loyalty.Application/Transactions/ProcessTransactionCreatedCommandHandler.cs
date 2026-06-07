@@ -1,5 +1,6 @@
 using System.Globalization;
 using Loyalty.Application.Abstractions;
+using Loyalty.Application.BonusOutbox;
 using Loyalty.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ public sealed class ProcessTransactionCreatedCommandHandler(
     ITransactionRepository transactionRepository,
     IProgramRepository programRepository,
     IParticipationRepository participationRepository,
-    IWebMoneyBonusClient webMoneyBonusClient,
+    IBonusOutboxRepository bonusOutboxRepository,
     ILogger<ProcessTransactionCreatedCommandHandler> logger)
     : ICommandHandler<ProcessTransactionCreatedCommand>
 {
@@ -22,10 +23,7 @@ public sealed class ProcessTransactionCreatedCommandHandler(
         var existingTransaction = await transactionRepository.GetByIdAsync(transactionId, cancellationToken);
         if (existingTransaction is not null)
         {
-            logger.LogDebug(
-                "Skipping already recorded transaction {TransactionId} (event {EventId})",
-                transactionId,
-                @event.EventId);
+            await EnsureBonusOutboxEnqueuedAsync(existingTransaction, cancellationToken);
             return;
         }
 
@@ -51,6 +49,12 @@ public sealed class ProcessTransactionCreatedCommandHandler(
         }
         catch (InvalidOperationException)
         {
+            var concurrentTransaction = await transactionRepository.GetByIdAsync(transactionId, cancellationToken);
+            if (concurrentTransaction is not null)
+            {
+                await EnsureBonusOutboxEnqueuedAsync(concurrentTransaction, cancellationToken);
+            }
+
             logger.LogDebug(
                 "Transaction {TransactionId} was created concurrently (event {EventId})",
                 transactionId,
@@ -77,6 +81,36 @@ public sealed class ProcessTransactionCreatedCommandHandler(
             programId,
             payload.Amount,
             cancellationToken);
+    }
+
+    private async Task EnsureBonusOutboxEnqueuedAsync(
+        Transaction transaction,
+        CancellationToken cancellationToken)
+    {
+        if (transaction.BonusAmountToAccrue is not > 0 || transaction.ProgramId is null)
+        {
+            logger.LogDebug(
+                "Skipping bonus outbox recovery for transaction {TransactionId}: no pending bonus",
+                transaction.Id);
+            return;
+        }
+
+        var added = await bonusOutboxRepository.TryAddAsync(
+            CreateOutboxEntry(
+                transaction.Id,
+                transaction.CardId,
+                transaction.BonusAmountToAccrue.Value,
+                transaction.ProgramId),
+            cancellationToken);
+
+        if (added)
+        {
+            logger.LogInformation(
+                "Recovered bonus outbox entry for transaction {TransactionId} (card {CardId}, amount {Amount})",
+                transaction.Id,
+                transaction.CardId,
+                transaction.BonusAmountToAccrue.Value);
+        }
     }
 
     private async Task ApplyProgramRewardAsync(
@@ -147,18 +181,32 @@ public sealed class ProcessTransactionCreatedCommandHandler(
             return;
         }
 
-        await webMoneyBonusClient.AccrueBonusAsync(
-            cardId,
-            bonusAmount,
-            transactionId,
-            programId,
+        await transactionRepository.SetBonusAmountToAccrueAsync(transactionId, bonusAmount, cancellationToken);
+
+        var added = await bonusOutboxRepository.TryAddAsync(
+            CreateOutboxEntry(transactionId, cardId, bonusAmount, programId),
             cancellationToken);
 
         logger.LogInformation(
-            "Accrued {BonusAmount} bonus for card {CardId} from transaction {TransactionId} (program {ProgramId})",
+            "Enqueued {BonusAmount} bonus for card {CardId} from transaction {TransactionId} (program {ProgramId}, newOutboxEntry {Added})",
             bonusAmount,
             cardId,
             transactionId,
-            programId);
+            programId,
+            added);
     }
+
+    private static BonusOutboxEntry CreateOutboxEntry(
+        string sourceTransactionId,
+        int cardId,
+        decimal bonusAmount,
+        string programId) =>
+        new()
+        {
+            SourceTransactionId = sourceTransactionId,
+            CardId = cardId,
+            Amount = bonusAmount,
+            ProgramId = programId,
+            OccurredAt = DateTime.UtcNow
+        };
 }

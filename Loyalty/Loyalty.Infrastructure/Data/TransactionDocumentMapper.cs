@@ -19,7 +19,9 @@ internal static class TransactionDocumentMapper
             ProgramId = transaction.ProgramId,
             CreatedAt = transaction.CreatedAt,
             CreatedBy = transaction.CreatedBy,
-            ReceivedAt = transaction.ReceivedAt
+            ReceivedAt = transaction.ReceivedAt,
+            UpdatedAt = transaction.UpdatedAt,
+            BonusAmountToAccrue = transaction.BonusAmountToAccrue
         };
 
     public static Transaction ToDomain(TransactionDocument document) =>
@@ -36,6 +38,8 @@ internal static class TransactionDocumentMapper
             ProgramId = document.ProgramId,
             CreatedAt = document.CreatedAt,
             CreatedBy = document.CreatedBy,
-            ReceivedAt = document.ReceivedAt
+            ReceivedAt = document.ReceivedAt,
+            UpdatedAt = document.UpdatedAt,
+            BonusAmountToAccrue = document.BonusAmountToAccrue
         };
 }

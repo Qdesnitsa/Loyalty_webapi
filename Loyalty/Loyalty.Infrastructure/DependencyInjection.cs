@@ -1,4 +1,5 @@
 using Loyalty.Application.Abstractions;
+using Loyalty.Infrastructure.BonusOutbox;
 using Loyalty.Infrastructure.Data;
 using Loyalty.Infrastructure.Health;
 using Loyalty.Infrastructure.Integration;
@@ -34,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IProgramRepository, ProgramRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<IParticipationRepository, ParticipationRepository>();
+        services.AddScoped<IBonusOutboxRepository, BonusOutboxRepository>();
 
         services.Configure<WebMoneyOptions>(configuration.GetSection(WebMoneyOptions.SectionName));
         services.AddHttpClient<IWebMoneyBonusClient, WebMoneyBonusClient>((serviceProvider, client) =>
@@ -41,10 +43,15 @@ public static class DependencyInjection
             var options = serviceProvider.GetRequiredService<
                 Microsoft.Extensions.Options.IOptions<WebMoneyOptions>>().Value;
             client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(10);
         });
 
         services.Configure<KafkaConsumerConfig>(configuration.GetSection(KafkaConsumerConfig.SectionName));
         services.AddHostedService<TransactionCreatedConsumer>();
+
+        services.Configure<BonusOutboxJobConfig>(configuration.GetSection(BonusOutboxJobConfig.SectionName));
+        services.AddSingleton<BonusOutboxProcessor>();
+        services.AddHostedService<BonusOutboxService>();
 
         return services;
     }

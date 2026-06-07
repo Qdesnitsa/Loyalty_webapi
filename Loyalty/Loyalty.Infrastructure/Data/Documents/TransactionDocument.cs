@@ -21,4 +21,6 @@ public sealed class TransactionDocument
     public DateTime CreatedAt { get; init; }
     public required string CreatedBy { get; init; }
     public DateTime ReceivedAt { get; init; }
+    public DateTime UpdatedAt { get; init; }
+    public decimal? BonusAmountToAccrue { get; init; }
 }
