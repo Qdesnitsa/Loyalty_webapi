@@ -20,8 +20,9 @@ public sealed class SwaggerRouteParameterFilter : IOperationFilter
             var parameter = operation.Parameters.FirstOrDefault(
                 p => p.In == ParameterLocation.Path && p.Name == paramName);
 
+            var relativePath = context.ApiDescription.RelativePath;
             if (parameter != null
-                && context.ApiDescription.RelativePath is { } relativePath
+                && relativePath != null
                 && !relativePath.Contains(paramName, StringComparison.OrdinalIgnoreCase))
             {
                 operation.Parameters.Remove(parameter);
