@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Loyalty.Api.ExceptionHandling;
 
+/// <summary>Global API exception handler</summary>
+/// <param name="environment">Host environment</param>
+/// <param name="logger">Logger</param>
 public sealed class GlobalExceptionHandler(
     IHostEnvironment environment,
     ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
@@ -16,6 +19,7 @@ public sealed class GlobalExceptionHandler(
         [ExceptionTypes.ResourceAlreadyExists] = StatusCodes.Status409Conflict
     };
 
+    /// <inheritdoc />
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,

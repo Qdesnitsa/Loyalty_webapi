@@ -5,6 +5,11 @@ using Microsoft.Extensions.Options;
 
 namespace Loyalty.Api.Authentication;
 
+/// <summary>API key authentication handler</summary>
+/// <param name="options">Authentication scheme options</param>
+/// <param name="logger">Logger factory</param>
+/// <param name="encoder">URL encoder</param>
+/// <param name="apiKeyOptions">API key options</param>
 public sealed class ApiKeyAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
@@ -12,6 +17,7 @@ public sealed class ApiKeyAuthenticationHandler(
     IOptions<ApiKeyOptions> apiKeyOptions)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
+    /// <inheritdoc />
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue(ApiKeyOptions.HeaderName, out var headerValues))

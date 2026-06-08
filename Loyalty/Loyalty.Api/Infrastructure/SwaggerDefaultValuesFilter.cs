@@ -4,8 +4,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Loyalty.Api.Infrastructure;
 
+/// <summary>Applies ASP.NET Core parameter defaults and descriptions to Swagger operations</summary>
 public sealed class SwaggerDefaultValuesFilter : IOperationFilter
 {
+    /// <inheritdoc />
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         foreach (var parameter in operation.Parameters)

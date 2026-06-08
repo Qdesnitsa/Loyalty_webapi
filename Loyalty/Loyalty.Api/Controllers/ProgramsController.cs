@@ -7,11 +7,19 @@ using ApiProgram = Loyalty.Api.Contracts.Programs.Program;
 
 namespace Loyalty.Api.Controllers;
 
+/// <summary>Programs management API</summary>
+/// <param name="mediator">Mediator</param>
 [Authorize]
 [ApiController]
 [Route("api/programs")]
 public sealed class ProgramsController(IMediator mediator) : ControllerBase
 {
+    /// <summary>Create a new program</summary>
+    /// <param name="request">Request body</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="201">New program</response>
+    /// <response code="400">Invalid request</response>
+    /// <returns>Created program</returns>
     [HttpPost]
     [ProducesResponseType(typeof(CreateProgramResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -25,6 +33,14 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = program.Id }, response);
     }
 
+    /// <summary>Update program</summary>
+    /// <param name="id">Program id</param>
+    /// <param name="request">Request body</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="200">Updated program</response>
+    /// <response code="400">Invalid request</response>
+    /// <response code="404">Program not found</response>
+    /// <returns>Updated program</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(UpdateProgramResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -38,6 +54,13 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
         return Ok(new UpdateProgramResponse(ApiProgram.FromApplication(program)));
     }
 
+    /// <summary>Delete program</summary>
+    /// <param name="id">Program id</param>
+    /// <param name="request">Request body</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="204">Program deleted</response>
+    /// <response code="400">Invalid request</response>
+    /// <response code="404">Program not found</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -51,6 +74,10 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
+    /// <summary>Gets all programs</summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="200">List of programs</response>
+    /// <returns>List of programs</returns>
     [HttpGet]
     [ProducesResponseType(typeof(GetProgramsResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<GetProgramsResponse>> GetAll(CancellationToken cancellationToken)
@@ -59,6 +86,12 @@ public sealed class ProgramsController(IMediator mediator) : ControllerBase
         return Ok(new GetProgramsResponse(programs.Select(ApiProgram.FromApplication).ToArray()));
     }
 
+    /// <summary>Gets program by id</summary>
+    /// <param name="id">Program id</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="200">Program</response>
+    /// <response code="404">Program not found</response>
+    /// <returns>Program response object</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(GetProgramResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

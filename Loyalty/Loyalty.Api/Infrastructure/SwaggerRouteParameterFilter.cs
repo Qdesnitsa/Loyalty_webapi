@@ -5,8 +5,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Loyalty.Api.Infrastructure;
 
+/// <summary>Removes route parameters that are not present in the route template from Swagger operations</summary>
 public sealed class SwaggerRouteParameterFilter : IOperationFilter
 {
+    /// <inheritdoc />
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         var routeParameters = context.MethodInfo.GetParameters()

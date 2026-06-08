@@ -2,6 +2,17 @@ using Loyalty.Domain.Entities;
 
 namespace Loyalty.Api.Contracts.Programs;
 
+/// <summary>Update program request</summary>
+/// <param name="Title">Program title</param>
+/// <param name="Description">Program description (optional)</param>
+/// <param name="State">Program state</param>
+/// <param name="StartDate">Program start date</param>
+/// <param name="FinishDate">Program finish date</param>
+/// <param name="MinTransactionAmount">Minimum transaction amount to apply the program</param>
+/// <param name="MaxTransactionAmount">Maximum transaction amount to apply the program</param>
+/// <param name="TransactionType">Applicable transaction type (Deposit or Withdrawal)</param>
+/// <param name="Achievement">Achievement and reward configuration</param>
+/// <param name="UpdatedBy">User who updated the program</param>
 public sealed record UpdateProgramRequest(
     string Title,
     string? Description,

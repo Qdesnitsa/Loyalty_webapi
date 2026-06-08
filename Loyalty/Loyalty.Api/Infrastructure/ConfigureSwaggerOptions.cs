@@ -5,15 +5,19 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Loyalty.Api.Infrastructure;
 
+/// <summary>Swagger configuration</summary>
 public sealed class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {
+    /// <inheritdoc />
     public void Configure(SwaggerGenOptions options)
     {
         options.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "Loyalty Api",
             Version = "v1",
-            Description = "Loyalty participation API"
+            Description =
+                @"Loyalty participation API.<br/>
+            <a href='https://github.com/Qdesnitsa/Loyalty_cs_webapi' target='_blank'>https://github.com/Qdesnitsa/Loyalty_cs_webapi</a>"
         });
 
         options.OperationFilter<SwaggerRouteParameterFilter>();
