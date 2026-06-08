@@ -2,10 +2,13 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Loyalty.Api.Authentication;
 using Loyalty.Api.ExceptionHandling;
+using Loyalty.Api.Infrastructure;
 using Loyalty.Application;
 using Loyalty.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,12 +41,21 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+builder.Services.AddSwaggerGen(options => options.CustomSchemaIds(type => type.FullName));
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Loyalty Api v1");
+    options.DocumentTitle = "Loyalty Api";
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
