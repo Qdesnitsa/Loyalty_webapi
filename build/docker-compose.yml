@@ -1,0 +1,31 @@
+services:
+  loyalty-api:
+    image: loyalty-local-api:latest
+    container_name: loyalty-api
+    build:
+      context: ../..
+      dockerfile: Loyalty/build/Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - "5281:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Mongo__ConnectionString: mongodb://mongodb:27017/?directConnection=true
+      Mongo__Database: loyalty_dev
+      Kafka__BootstrapServers: kafka:9092
+      Kafka__GroupId: loyalty-transactions-dev
+      Kafka__Topic: webmoney.transactions.created
+      ApiKey__Key: dev-loyalty-api-key
+      WebMoneyService__BaseUrl: http://webmoney-api:8080
+      WebMoneyService__ApiKey: dev-loyalty-api-key
+      BonusOutboxJob__BatchSize: 200
+      BonusOutboxJob__PollingInterval: "00:00:03"
+    networks:
+      - agent-local
+
+networks:
+  agent-local:
+    name: agent-local
+    external: true

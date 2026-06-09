@@ -1,0 +1,16 @@
+**/.git
+**/.gitignore
+**/.idea
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/bin
+**/obj
+**/node_modules
+**/npm-debug.log
+**/.dockerignore
+**/Dockerfile*
+**/docker-compose*
+**/secrets.dev.yaml
+**/values.dev.yaml
+Loyalty/**/Loyalty.sln.DotSettings.user

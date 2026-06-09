@@ -12,6 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0DF04B98
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loyalty.Api.UnitTests", "Loyalty.Api.UnitTests\Loyalty.Api.UnitTests.csproj", "{77041C43-6AF5-4CAF-967B-3C66206B2D4D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{92E41175-593B-40AF-9398-A0B929BCBAFE}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\docker-compose.infrastructure.yml = ..\build\docker-compose.infrastructure.yml
+		..\build\docker-compose.yml = ..\build\docker-compose.yml
+		..\build\Dockerfile = ..\build\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
