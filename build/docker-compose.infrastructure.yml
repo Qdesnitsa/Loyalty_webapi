@@ -13,11 +13,11 @@ services:
     volumes:
       - loyalty-mongo-local:/data/db
     networks:
-      - agent-local
+      - local-dev-network
 
 networks:
-  agent-local:
-    name: agent-local
+  local-dev-network:
+    name: local-dev-network
     external: true
 
 volumes:
