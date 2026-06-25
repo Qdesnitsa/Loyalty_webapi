@@ -21,9 +21,13 @@ public class GlobalExceptionHandlerTests
         string exceptionType,
         int expectedStatusCode)
     {
-        var (statusCode, problem) = await HandleAsync(
-            new InvalidQueryException("Application error", exceptionType));
+        // Arrange
+        var exception = new InvalidQueryException("Application error", exceptionType);
 
+        // Act
+        var (statusCode, problem) = await HandleAsync(exception);
+
+        // Assert
         statusCode.ShouldBe(expectedStatusCode);
         problem.Type.ShouldBe(exceptionType);
         problem.Status.ShouldBe(expectedStatusCode);
@@ -32,6 +36,7 @@ public class GlobalExceptionHandlerTests
     [Fact]
     public async Task TryHandleAsync_ValidationException_Returns400WithValidationProblemDetails()
     {
+        // Arrange
         var exception = new ValidationException(
         [
             new ValidationFailure("Title", "Title is required")
@@ -40,8 +45,10 @@ public class GlobalExceptionHandlerTests
         var context = CreateHttpContext();
         var handler = CreateHandler();
 
+        // Act
         var handled = await handler.TryHandleAsync(context, exception, CancellationToken.None);
 
+        // Assert
         handled.ShouldBeTrue();
         context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
 
@@ -54,9 +61,13 @@ public class GlobalExceptionHandlerTests
     [Fact]
     public async Task TryHandleAsync_UnknownApplicationExceptionType_Returns400()
     {
-        var (statusCode, problem) = await HandleAsync(
-            new InvalidCommandException("Unknown error", "UnknownType"));
+        // Arrange
+        var exception = new InvalidCommandException("Unknown error", "UnknownType");
 
+        // Act
+        var (statusCode, problem) = await HandleAsync(exception);
+
+        // Assert
         statusCode.ShouldBe(StatusCodes.Status400BadRequest);
         problem.Type.ShouldBe("UnknownType");
         problem.Title.ShouldBe("Unknown error");
@@ -65,8 +76,13 @@ public class GlobalExceptionHandlerTests
     [Fact]
     public async Task TryHandleAsync_UnhandledException_Returns500()
     {
-        var (statusCode, problem) = await HandleAsync(new InvalidOperationException("Unexpected"));
+        // Arrange
+        var exception = new InvalidOperationException("Unexpected");
 
+        // Act
+        var (statusCode, problem) = await HandleAsync(exception);
+
+        // Assert
         statusCode.ShouldBe(StatusCodes.Status500InternalServerError);
         problem.Title.ShouldBe("An unexpected error occurred");
     }
